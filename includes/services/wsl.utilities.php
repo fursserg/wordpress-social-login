@@ -2,8 +2,8 @@
 /*!
 * WordPress Social Login
 *
-* https://miled.github.io/wordpress-social-login/ | https://github.com/miled/wordpress-social-login
-*   (c) 2011-2018 Mohamed Mrassi and contributors | https://wordpress.org/plugins/wordpress-social-login/
+* http://miled.github.io/wordpress-social-login/ | https://github.com/miled/wordpress-social-login
+*  (c) 2011-2015 Mohamed Mrassi and contributors | http://wordpress.org/plugins/wordpress-social-login/
 */
 
 /**
@@ -433,6 +433,38 @@ function wsl_generate_backtrace()
     }
 
     return "\n\t" . implode( "\n\t", $result );
+}
+
+/*
+* Starting session
+*
+* @author Sergey Fursov
+*/
+function wsl_alternative_session_start()
+{
+	session_id() or session_start();
+	
+	global $WORDPRESS_SOCIAL_LOGIN_VERSION;	
+
+	$_SESSION["wsl::plugin"] = "WordPress Social Login " . $WORDPRESS_SOCIAL_LOGIN_VERSION;
+}
+
+/*
+* Destroy session and clear session data
+*
+* @author Sergey Fursov
+*/
+function wsl_destroy_session()
+{
+	$_SESSION = array();
+	
+	$params = session_get_cookie_params();
+    setcookie(session_name(), '', time() - 42000,
+        $params["path"], $params["domain"],
+        $params["secure"], $params["httponly"]
+    );
+
+	session_destroy();
 }
 
 // --------------------------------------------------------------------
